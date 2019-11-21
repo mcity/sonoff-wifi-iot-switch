@@ -18,7 +18,7 @@
   |      --       |flash - slow     |connecting to wifi |
   |      --       |flash - fast 10x |server ready       |
   |      --       |flash - short    |client got page    | 
-  |before power on|    --           |flash formware mode|
+  |before power on|    --           |flash firmware mode|
   |---------------|-----------------|-------------------|
 
   Firmware Update:
@@ -178,7 +178,7 @@ void handleGET() {
   buff += "html {font-family: sans-serif;background:#f0f5f5}\n";
   buff += ".submit {width: 10%; height:5vw; font-size: 100%; font-weight: bold; border-radius: 4vw;}\n";
   buff += "@media (max-width: 1281px) {\n";
-  buff += "html {font-size: 3vw; font-family: sans-serif;background:#ffe4c4}\n";
+  buff += "html {font-size: 3vw; font-family: sans-serif;background:#f0f5f5}\n";
   buff += ".submit {width: 40%; height:20vw; font-size: 100%; font-weight: bold; border-radius: 15vw;}}\n";
   buff += "</style>\n";
   buff += "<meta content=\"text/html; charset=utf-8\">\n";
@@ -215,6 +215,7 @@ void handleGET() {
   } else {
     buff += "OFF</h2>\n";
   }
+  buff += "<input type=\"hidden\" name=\"return\" value=\"TRUE\">";
   buff += "<input type=\"submit\" name=\"state\" class=\"submit\" value=\"ON\" style=\"" + OnButt + "\">\n";
   buff += "<input type=\"submit\" name=\"state\" class=\"submit\" value=\"OFF\" style=\"" + OffButt + "\">\n";
   buff += "</form></body></html>\n";
@@ -235,7 +236,10 @@ void handleStatePOST() {
     return server.requestAuthentication();
   if (server.arg("state") == "ON") setRelay(true);
   if (server.arg("state") == "OFF") setRelay(false);
-  handleStateGET();
+
+  //Redirect to home page is user requests it.
+  if (server.arg("return") == "TRUE") handleGET();
+  else handleStateGET();
 }
 
 /* 
